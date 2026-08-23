@@ -1,5 +1,5 @@
 // src/App.jsx
-// Practical Concept: Practical 2 (React Router DOM: BrowserRouter, Routes, Route Setup)
+// Practical Concept: Practical 2 & Practical 7 (React Router DOM & Auth Routes Setup)
 
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Auth from "./components/Auth";
 
 // User Pages
 import Home from "./pages/Home";
@@ -36,6 +37,8 @@ function App() {
             <Route path="/events/:id" element={<EventDetails />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />

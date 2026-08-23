@@ -1,11 +1,75 @@
 // src/api.js
-// Practical Concept: Practical 3 and Practical 6
-// Central file for all Event API requests
+// Practical Concept: Practical 3, Practical 6 & Practical 7
+// Central file for Event & Auth API requests with JWT Authorization headers
 
 const BASE_URL = "http://localhost:5000/api";
 
+// Helper to get authorization headers with JWT token
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
 
-// GET all events
+// REGISTER USER
+export async function registerUser(email, password) {
+  const response = await fetch(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Registration failed");
+  }
+  return data;
+}
+
+// LOGIN USER
+export async function loginUser(email, password) {
+  const response = await fetch(`${BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Login failed");
+  }
+  return data;
+}
+
+// GET CURRENT LOGGED-IN USER PROFILE (/me)
+export async function getCurrentUser() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  const response = await fetch(`${BASE_URL}/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to load user profile");
+  }
+
+  return response.json();
+}
+
+// GET ALL EVENTS (Public)
 export async function getEvents() {
   const response = await fetch(`${BASE_URL}/events`);
 
@@ -16,8 +80,7 @@ export async function getEvents() {
   return response.json();
 }
 
-
-// GET one event
+// GET ONE EVENT
 export async function getEventById(id) {
   const response = await fetch(`${BASE_URL}/events/${id}`);
 
@@ -28,16 +91,18 @@ export async function getEventById(id) {
   return response.json();
 }
 
-
-// CREATE event
+// CREATE EVENT (Protected with JWT)
 export async function createEvent(eventData) {
   const response = await fetch(`${BASE_URL}/events`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(eventData),
   });
+
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    throw new Error("Session expired or unauthorized. Please login first.");
+  }
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -47,33 +112,42 @@ export async function createEvent(eventData) {
   return response.json();
 }
 
-
-// UPDATE event
+// UPDATE EVENT (Protected with JWT)
 export async function updateEvent(id, eventData) {
   const response = await fetch(`${BASE_URL}/events/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(eventData),
   });
 
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    throw new Error("Session expired or unauthorized. Please login first.");
+  }
+
   if (!response.ok) {
-    throw new Error("Failed to update event");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update event");
   }
 
   return response.json();
 }
 
-
-// DELETE event
+// DELETE EVENT (Protected with JWT)
 export async function deleteEvent(id) {
   const response = await fetch(`${BASE_URL}/events/${id}`, {
     method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    throw new Error("Session expired or unauthorized. Please login first.");
+  }
+
   if (!response.ok) {
-    throw new Error("Failed to delete event");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to delete event");
   }
 
   return response.json();

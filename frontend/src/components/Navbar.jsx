@@ -1,10 +1,20 @@
 // src/components/Navbar.jsx
-// Practical Concept: Practical 1 & Practical 2 (Functional Components & React Router NavLink)
+// Practical Concept: Practical 1, Practical 2 & Practical 7
+// Navigation bar with dynamic auth status (Login / Logout controls)
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+    window.location.reload();
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -65,6 +75,29 @@ function Navbar() {
               Admin Panel ⚡
             </NavLink>
           </li>
+
+          {token ? (
+            <li>
+              <button
+                onClick={handleLogout}
+                className="btn btn-danger btn-sm"
+                style={{ marginLeft: "0.5rem" }}
+              >
+                Logout 🚪
+              </button>
+            </li>
+          ) : (
+            <li>
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Login 🔐
+              </NavLink>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
