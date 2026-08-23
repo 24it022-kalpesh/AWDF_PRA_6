@@ -1,5 +1,6 @@
 // server.js
-// Practical Concept: Practical 4, Practical 5 & Practical 6 (Express Server, MongoDB Connection & Middleware Pipeline)
+// Practical Concept: Practical 4, Practical 5, Practical 6 & Practical 7
+// (Express Server, MongoDB Connection, Authentication & Middleware Pipeline)
 
 // 1. Import dependencies
 const express = require("express");
@@ -11,6 +12,8 @@ const mongoose = require("mongoose");
 const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const eventRoutes = require("./routes/eventRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 // 2. Load environment variables from .env file
 dotenv.config();
@@ -45,20 +48,36 @@ app.use(logger);
 // Health check / welcome route
 app.get("/", (req, res) => {
   res.json({
-    message: "Welcome to the Event Management System API!",
+    message: "Welcome to the Event & Task Management System API!",
     status: "Running",
     endpoints: {
-      getAllEvents: "GET /api/events",
-      getSingleEvent: "GET /api/events/:id",
-      createEvent: "POST /api/events",
-      updateEvent: "PUT /api/events/:id",
-      deleteEvent: "DELETE /api/events/:id",
+      auth: {
+        register: "POST /api/auth/register",
+        login: "POST /api/auth/login",
+        me: "GET /api/auth/me (Bearer Token Required)",
+      },
+      events: {
+        getAllEvents: "GET /api/events",
+        getSingleEvent: "GET /api/events/:id",
+        createEvent: "POST /api/events (Protected)",
+        updateEvent: "PUT /api/events/:id (Protected)",
+        deleteEvent: "DELETE /api/events/:id (Protected)",
+      },
+      tasks: {
+        getAllTasks: "GET /api/tasks (Protected)",
+        getSingleTask: "GET /api/tasks/:id (Protected)",
+        createTask: "POST /api/tasks (Protected)",
+        updateTask: "PUT /api/tasks/:id (Protected)",
+        deleteTask: "DELETE /api/tasks/:id (Protected)",
+      },
     },
   });
 });
 
-// 8. Register Event CRUD routes with /api/events prefix
+// 8. Register Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // 9. 404 Handler for undefined API routes
 app.use((req, res, next) => {

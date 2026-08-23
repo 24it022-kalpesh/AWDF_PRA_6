@@ -1,56 +1,66 @@
-# 📅 Event Management System (MERN Stack) — Practical 6 Performed
+# 📅 Event & Task Management System (MERN Stack) — Practical 6 & 7
 
-A complete, modular full-stack **Event Management System** built with **React (Vite), Node.js, Express, and MongoDB (Mongoose)** for the **Advanced Web Development Frameworks (AWDF)** practical syllabus.
+A complete, modular full-stack application built with **React (Vite), Node.js, Express, MongoDB (Mongoose), and JWT Authentication** for the **Advanced Web Development Frameworks (AWDF)** practical syllabus.
 
-> **✅ Status: Practical 6 Performed & Verified**  
-> Generic *Item* entity successfully converted to the full-featured **Event Management System** with end-to-end full-stack CRUD operations.
+> **✅ Status: Practical 6 & 7 Performed & Verified**  
+> - **Practical 6:** Full-stack CRUD operations and MERN architecture  
+> - **Practical 7:** JWT Authentication (`bcryptjs`, `jsonwebtoken`), Protected Routes (`authMiddleware`), Input Validation Middleware (`validateTask`), User Model & `/api/auth/me`
 
 ---
 
 ## 📑 Table of Contents
+- [Practical 7 Performed Overview](#-practical-7-performed-overview)
 - [Practical 6 Performed Overview](#-practical-6-performed-overview)
 - [Tech Stack](#-tech-stack)
-- [Project Architecture](#-project-architecture)
+- [Project Architecture & Auth Pipeline](#-project-architecture--auth-pipeline)
 - [Folder Structure](#-folder-structure)
 - [Practical Syllabus Mapping](#-practical-syllabus-mapping)
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [1. Backend Setup](#1-backend-setup)
   - [2. Frontend Setup](#2-frontend-setup)
-- [API Endpoints Reference](#-api-endpoints-reference)
-- [Testing Endpoints with Postman / Thunder Client / PowerShell](#-testing-endpoints)
+- [API Endpoints Reference (Including Auth)](#-api-endpoints-reference)
+- [Testing Authentication Endpoints](#-testing-authentication-endpoints)
 - [License](#-license)
 
 ---
 
-## ✅ Practical 6 Performed Overview
+## 🔐 Practical 7 Performed Overview
 
-In **Practical 6**, the generic full-stack template was successfully adapted into an **Event Management System**:
+In **Practical 7**, security, user management, and middleware layers were added:
 
-1. **Backend Model & Validation ([Event.js](backend/models/Event.js))**:
-   - `title` (String, required, trimmed)
-   - `description` (String)
-   - `eventDate` (Date, required)
-   - `location` (String, required, trimmed)
-   - `category` (String, required: Technology, Cultural, Sports, Education, Workshop)
-   - `status` (Enum: `Upcoming`, `Ongoing`, `Completed`, `Cancelled`)
-   - `createdAt` (Date, default: Date.now)
+1. **User Model & Schema ([User.js](backend/models/User.js))**:
+   - `email` (String, required, unique, trimmed)
+   - `password` (String, hashed with `bcryptjs` salt rounds = 10)
+   - `timestamps` (`createdAt`, `updatedAt`)
 
-2. **Backend REST API ([eventRoutes.js](backend/routes/eventRoutes.js))**:
-   - `GET /api/events` — Retrieve all events (sorted latest first)
-   - `GET /api/events/:id` — Retrieve a single event by ID
-   - `POST /api/events` — Create a new event with validation
-   - `PUT /api/events/:id` — Update existing event by ID
-   - `DELETE /api/events/:id` — Delete event by ID
+2. **Authentication Routes ([authRoutes.js](backend/routes/authRoutes.js))**:
+   - `POST /api/auth/register` — Validates input, hashes password, saves user
+   - `POST /api/auth/login` — Verifies password hash, issues signed JWT token (expires in 1h)
+   - `GET /api/auth/me` — Protected endpoint returning logged-in user profile (excluding password)
 
-3. **Frontend Implementation & Integration**:
-   - **[api.js](frontend/src/api.js)** — Centralized Fetch API client (`getEvents`, `getEventById`, `createEvent`, `updateEvent`, `deleteEvent`)
-   - **[EventCard.jsx](frontend/src/components/EventCard.jsx)** — Reusable card with formatted dates, badges, and detail view link
-   - **[EventForm.jsx](frontend/src/components/EventForm.jsx)** — Controlled form for creating and updating events
-   - **[Events.jsx](frontend/src/pages/Events.jsx)** — Public exploration catalog with dynamic loading/error states
-   - **[EventDetails.jsx](frontend/src/pages/EventDetails.jsx)** — Dynamic route (`/events/:id`) using `useParams()`
-   - **[AdminDashboard.jsx](frontend/src/pages/admin/AdminDashboard.jsx)** — Aggregated metrics (Total, Upcoming, Completed) and recent event tables
-   - **[ManageEvents.jsx](frontend/src/pages/admin/ManageEvents.jsx)** — Complete admin CRUD management interface
+3. **Authentication Middleware ([authMiddleware.js](backend/middleware/authMiddleware.js))**:
+   - Extracts `Bearer <token>` from the `Authorization` header
+   - Verifies JWT using `process.env.JWT_SECRET`
+   - Attaches decoded user `{ id: user._id }` to `req.user`
+   - Rejects unauthorized or malformed requests with `401 Unauthorized`
+
+4. **Validation Middleware ([validateTask.js](backend/middleware/validateTask.js))**:
+   - Validates that mandatory fields (`title`) are non-empty before processing requests
+
+5. **Protected Route Pipeline**:
+   ```
+   Client Request ──> authMiddleware (JWT Check) ──> validateTask ──> Controller/DB
+   ```
+
+---
+
+## 📅 Practical 6 Performed Overview
+
+In **Practical 6**, the generic full-stack template was adapted into an **Event Management System**:
+- **Backend Model ([Event.js](backend/models/Event.js))**: `title`, `description`, `eventDate`, `location`, `category`, `status`, `createdAt`
+- **Backend REST API ([eventRoutes.js](backend/routes/eventRoutes.js))**: Full CRUD operations
+- **Frontend Components**: Reusable components ([EventCard.jsx](frontend/src/components/EventCard.jsx), [EventForm.jsx](frontend/src/components/EventForm.jsx)), multi-page routing ([Events.jsx](frontend/src/pages/Events.jsx), [EventDetails.jsx](frontend/src/pages/EventDetails.jsx), [ManageEvents.jsx](frontend/src/pages/admin/ManageEvents.jsx), [AdminDashboard.jsx](frontend/src/pages/admin/AdminDashboard.jsx))
 
 ---
 
@@ -65,14 +75,15 @@ In **Practical 6**, the generic full-stack template was successfully adapted int
 ### Backend
 - **Node.js** — JavaScript runtime
 - **Express.js** — Lightweight REST API framework
-- **MongoDB** — Document database for data persistence
-- **Mongoose** — Schema definition, validation, and database queries
-- **dotenv** — Environment variable management
+- **MongoDB & Mongoose** — Document database with ODM validation
+- **bcryptjs** — Password hashing
+- **jsonwebtoken (JWT)** — Token-based stateless authentication
+- **dotenv** — Environment configuration
 - **cors** — Cross-Origin Resource Sharing middleware
 
 ---
 
-## 🏛 Project Architecture
+## 🏛 Project Architecture & Auth Pipeline
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -81,19 +92,20 @@ In **Practical 6**, the generic full-stack template was successfully adapted int
 │             http://localhost:5173                      │
 │    - User Interface, Pages & Admin Dashboard           │
 │    - State Management (useState, useEffect)            │
-│    - Dynamic Routes (/events/:id)                      │
 └──────────────────────────┬─────────────────────────────┘
                            │
-                           │ HTTP JSON Requests (Fetch API)
-                           │ (GET, POST, PUT, DELETE)
+                           │ HTTP Requests with Optional Header:
+                           │ Authorization: Bearer <JWT_TOKEN>
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │                2. Application Layer                    │
 │               Express.js REST API                      │
 │             http://localhost:5000                      │
-│    - CORS & Logger Middleware                          │
-│    - API Routes (/api/events)                          │
-│    - Global Error Handling                             │
+│    ├── logger.js / cors()                              │
+│    ├── /api/auth (register, login, me)                 │
+│    ├── authMiddleware (JWT verification)               │
+│    ├── validateTask (body validation)                  │
+│    └── /api/events & /api/tasks (Protected CRUD)       │
 └──────────────────────────┬─────────────────────────────┘
                            │
                            │ Queries & Mutations (Mongoose ODM)
@@ -102,8 +114,7 @@ In **Practical 6**, the generic full-stack template was successfully adapted int
 │                  3. Data Layer                         │
 │                MongoDB Database                        │
 │             mongodb://127.0.0.1:27017                  │
-│    - Database: management_system_db                    │
-│    - Collection: events                                │
+│    - Collections: users, events                        │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -115,47 +126,52 @@ In **Practical 6**, the generic full-stack template was successfully adapted int
 PRA_6/
 ├── backend/
 │   ├── middleware/
-│   │   ├── errorHandler.js       # Global JSON error handling middleware
-│   │   └── logger.js             # HTTP request logger middleware
+│   │   ├── authMiddleware.js     # JWT Bearer Token validation
+│   │   ├── errorHandler.js       # Global JSON error handler
+│   │   ├── logger.js             # HTTP request logger
+│   │   └── validateTask.js       # Payload validation middleware
 │   ├── models/
-│   │   └── Event.js              # Mongoose schema with validations for Events
+│   │   ├── Event.js              # Event schema
+│   │   └── User.js               # User schema (email, password)
 │   ├── routes/
-│   │   └── eventRoutes.js        # RESTful CRUD routes (GET, POST, PUT, DELETE)
-│   ├── .env                      # Local environment configuration
-│   ├── .env.example              # Example environment configuration
+│   │   ├── authRoutes.js         # Auth routes (/register, /login, /me)
+│   │   ├── eventRoutes.js        # Event CRUD routes
+│   │   └── taskRoutes.js         # Task CRUD routes with auth
+│   ├── .env                      # PORT, MONGO_URI, JWT_SECRET
+│   ├── .env.example              # Example environment template
 │   ├── .gitignore                # Git ignore rules
-│   ├── package.json              # Backend dependencies and scripts
-│   └── server.js                 # Express server entry point & MongoDB connection
+│   ├── package.json              # Backend dependencies
+│   └── server.js                 # Express server & DB connection
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── ErrorMessage.jsx   # Error alert banner
-│   │   │   ├── EventCard.jsx      # Event display card component
-│   │   │   ├── EventForm.jsx      # Controlled Add/Edit form component
-│   │   │   ├── Footer.jsx         # Persistent footer
-│   │   │   ├── Header.jsx         # Reusable page banner
-│   │   │   ├── Loading.jsx        # Loading spinner component
-│   │   │   └── Navbar.jsx         # Top navigation bar
+│   │   │   ├── ErrorMessage.jsx
+│   │   │   ├── EventCard.jsx
+│   │   │   ├── EventForm.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── Loading.jsx
+│   │   │   └── Navbar.jsx
 │   │   ├── pages/
 │   │   │   ├── admin/
-│   │   │   │   ├── AdminDashboard.jsx  # Admin stats & recent events
-│   │   │   │   └── ManageEvents.jsx    # Full CRUD management panel
-│   │   │   ├── About.jsx          # About page
-│   │   │   ├── Contact.jsx        # Controlled input demo page
-│   │   │   ├── EventDetails.jsx   # Individual event details page
-│   │   │   ├── Events.jsx         # Public events catalog
-│   │   │   ├── Home.jsx           # Landing / Hero page
-│   │   │   └── NotFound.jsx       # 404 fallback page
-│   │   ├── api.js                 # Centralized Fetch API functions for Events
-│   │   ├── App.jsx                # React Router setup
-│   │   ├── index.css              # Global styles
-│   │   └── main.jsx               # React DOM root mounting
-│   ├── index.html                 # Main HTML file
-│   ├── package.json               # Frontend dependencies and scripts
-│   └── vite.config.js             # Vite configuration
+│   │   │   │   ├── AdminDashboard.jsx
+│   │   │   │   └── ManageEvents.jsx
+│   │   │   ├── About.jsx
+│   │   │   ├── Contact.jsx
+│   │   │   ├── EventDetails.jsx
+│   │   │   ├── Events.jsx
+│   │   │   ├── Home.jsx
+│   │   │   └── NotFound.jsx
+│   │   ├── api.js
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
 │
-└── README.md                      # Documentation
+└── README.md
 ```
 
 ---
@@ -164,135 +180,106 @@ PRA_6/
 
 | Practical | Covered Concepts in this Project |
 | :--- | :--- |
-| **Practical 1** | React with Vite, Functional Components, Component Composition, Props, Reusable UI (`Header`, `EventCard`, `Loading`, `ErrorMessage`, `Footer`) |
-| **Practical 2** | React Router DOM (`BrowserRouter`, `Routes`, `Route`, `NavLink`), multi-page navigation, `useState` hook, controlled inputs (`Contact.jsx`, `EventForm.jsx`) |
-| **Practical 3** | `useEffect` hook, Fetch API data loading, managing `loading`, `error`, and `success` states, dynamic array rendering |
-| **Practical 4** | Express server setup, RESTful CRUD endpoints (`GET`, `POST`, `PUT`, `DELETE`), Request Logging middleware, Global Error Handling middleware, proper HTTP status codes (200, 201, 400, 404, 500) |
-| **Practical 5** | MongoDB connection with Mongoose, Schema definition, validation (`required: true`, enums), default values, database queries (`find`, `findById`, `create`, `findByIdAndUpdate`, `findByIdAndDelete`) |
-| **Practical 6** | **Full-stack integration with CORS**, connecting React to Express and Express to MongoDB, state updates after API calls, data persistence across browser refreshes |
+| **Practical 1** | React with Vite, Functional Components, Component Composition, Props, Reusable UI |
+| **Practical 2** | React Router DOM (`BrowserRouter`, `Routes`, `Route`, `NavLink`), `useState` hook, controlled forms |
+| **Practical 3** | `useEffect` hook, Fetch API data loading, managing `loading`/`error` states |
+| **Practical 4** | Express server setup, RESTful CRUD endpoints, custom logger & error handler middlewares |
+| **Practical 5** | MongoDB connection with Mongoose, Schema definition, validation, database CRUD queries |
+| **Practical 6** | Full-stack MERN integration with CORS and database persistence |
+| **Practical 7** | **Authentication & Security**: Password hashing (`bcryptjs`), JWT generation & verification (`jsonwebtoken`), protected routes with `authMiddleware`, input validation with `validateTask`, and `/api/auth/me` |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) installed (v18 or higher recommended)
-- [MongoDB Community Server](https://www.mongodb.com/try/download/community) installed and running locally on `mongodb://127.0.0.1:27017`
+- [Node.js](https://nodejs.org/) installed (v18+)
+- [MongoDB](https://www.mongodb.com/try/download/community) running locally on `mongodb://127.0.0.1:27017`
 
 ---
 
 ### 1. Backend Setup
 
-1. Open a terminal and navigate to the `backend` folder:
-   ```bash
-   cd backend
-   ```
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Ensure your `.env` file exists:
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb://127.0.0.1:27017/management_system_db
-   ```
-
-4. Start the backend server:
-   ```bash
-   npm run dev
-   ```
-   *The server will start at `http://localhost:5000` with auto-reload enabled.*
+Ensure `backend/.env` contains:
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/management_system_db
+JWT_SECRET=my_super_secret_key_12345
+```
 
 ---
 
 ### 2. Frontend Setup
 
-1. Open a second terminal and navigate to the `frontend` folder:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and navigate to:
-   ```
-   http://localhost:5173
-   ```
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173).
 
 ---
 
 ## 📡 API Endpoints Reference
 
-Base URL: `http://localhost:5000/api/events`
+### 🔐 Authentication Endpoints (`/api/auth`)
 
-| HTTP Method | Route | Description | Expected Status Code |
+| HTTP Method | Route | Description | Headers / Auth |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/api/events` | Retrieve all events (sorted newest first) | `200 OK` |
-| **GET** | `/api/events/:id` | Retrieve a single event by MongoDB ID | `200 OK` / `404 Not Found` |
-| **POST** | `/api/events` | Create a new event | `201 Created` / `400 Bad Request` |
-| **PUT** | `/api/events/:id` | Update an existing event by ID | `200 OK` / `404 Not Found` |
-| **DELETE** | `/api/events/:id` | Delete an event by ID | `200 OK` / `404 Not Found` |
+| **POST** | `/api/auth/register` | Register new user with email and password | None |
+| **POST** | `/api/auth/login` | Login and receive JWT access token | None |
+| **GET** | `/api/auth/me` | Retrieve authenticated user profile | `Authorization: Bearer <token>` |
 
-### Sample JSON Request Body (POST / PUT):
-```json
-{
-  "title": "Tech Symposium 2026",
-  "description": "Annual student technical symposium and coding contest",
-  "eventDate": "2026-09-15",
-  "location": "Auditorium A",
-  "category": "Technology",
-  "status": "Upcoming"
-}
-```
+### 📅 Events Endpoints (`/api/events`)
+
+| HTTP Method | Route | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/events` | Retrieve all events | No |
+| **GET** | `/api/events/:id` | Retrieve single event by ID | No |
+| **POST** | `/api/events` | Create a new event | **Yes** (`Bearer <token>`) |
+| **PUT** | `/api/events/:id` | Update event by ID | **Yes** (`Bearer <token>`) |
+| **DELETE** | `/api/events/:id` | Delete event by ID | **Yes** (`Bearer <token>`) |
 
 ---
 
-## 🧪 Testing Endpoints
+## 🧪 Testing Authentication Endpoints
 
-You can test all endpoints using **Postman**, **Thunder Client**, or PowerShell:
+### 1. Register a User
+- **POST** `http://localhost:5000/api/auth/register`
+- **Body (JSON)**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
 
-1. **Create Event (`POST`):**
-   - URL: `http://localhost:5000/api/events`
-   - Method: `POST`
-   - Headers: `Content-Type: application/json`
-   - Body:
-     ```json
-     {
-       "title": "Cultural Night",
-       "description": "Annual university musical and dance celebration",
-       "eventDate": "2026-10-10",
-       "location": "Main Ground",
-       "category": "Cultural",
-       "status": "Upcoming"
-     }
-     ```
-   - Status: `201 Created`
+### 2. Login & Obtain JWT Token
+- **POST** `http://localhost:5000/api/auth/login`
+- **Body (JSON)**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "Login successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+  ```
 
-2. **Get All Events (`GET`):**
-   - URL: `http://localhost:5000/api/events`
-   - Method: `GET`
-   - Status: `200 OK`
-
-3. **Update Event (`PUT`):**
-   - URL: `http://localhost:5000/api/events/<EVENT_ID>`
-   - Method: `PUT`
-   - Body: `{"status": "Completed"}`
-   - Status: `200 OK`
-
-4. **Delete Event (`DELETE`):**
-   - URL: `http://localhost:5000/api/events/<EVENT_ID>`
-   - Method: `DELETE`
-   - Status: `200 OK`
+### 3. Access Protected Profile (`/me`)
+- **GET** `http://localhost:5000/api/auth/me`
+- **Header**: `Authorization: Bearer <YOUR_JWT_TOKEN>`
 
 ---
 

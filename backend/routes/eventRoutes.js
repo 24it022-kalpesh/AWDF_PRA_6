@@ -1,9 +1,11 @@
 // backend/routes/eventRoutes.js
-// Practical Concept: Practical 4 and Practical 5
-// REST API CRUD operations for Events
+// Practical Concept: Practical 4, Practical 5 & Practical 7
+// REST API CRUD operations with Authentication & Validation Middlewares
 
 const express = require("express");
 const Event = require("../models/Event");
+const authMiddleware = require("../middleware/authMiddleware");
+const validateTask = require("../middleware/validateTask");
 
 const router = express.Router();
 
@@ -45,8 +47,8 @@ router.get("/:id", async (req, res, next) => {
 });
 
 
-// POST create new event
-router.post("/", async (req, res, next) => {
+// POST create new event (Protected with authMiddleware & validateTask)
+router.post("/", authMiddleware, validateTask, async (req, res, next) => {
   try {
     const event = await Event.create(req.body);
 
@@ -61,8 +63,8 @@ router.post("/", async (req, res, next) => {
 });
 
 
-// PUT update event
-router.put("/:id", async (req, res, next) => {
+// PUT update event (Protected with authMiddleware & validateTask)
+router.put("/:id", authMiddleware, validateTask, async (req, res, next) => {
   try {
     const event = await Event.findByIdAndUpdate(
       req.params.id,
@@ -91,8 +93,8 @@ router.put("/:id", async (req, res, next) => {
 });
 
 
-// DELETE event
-router.delete("/:id", async (req, res, next) => {
+// DELETE event (Protected with authMiddleware)
+router.delete("/:id", authMiddleware, async (req, res, next) => {
   try {
     const event = await Event.findByIdAndDelete(req.params.id);
 
