@@ -4,7 +4,7 @@ A complete, modular full-stack application built with **React (Vite), Node.js, E
 
 > **✅ Status: Practical 6 & 7 Performed & Verified**  
 > - **Practical 6:** Full-stack CRUD operations and MERN architecture  
-> - **Practical 7:** JWT Authentication (`bcryptjs`, `jsonwebtoken`), Protected Routes (`authMiddleware`), Input Validation Middleware (`validateTask`), User Model & `/api/auth/me`
+> - **Practical 7:** JWT Authentication (`bcryptjs`, `jsonwebtoken`), Protected Routes (`authMiddleware`), Input Validation Middleware (`validateTask`), User Model & `/api/auth/me`, Frontend Login/Register (`Auth.jsx`), and Client Logout
 
 ---
 
@@ -27,8 +27,9 @@ A complete, modular full-stack application built with **React (Vite), Node.js, E
 
 ## 🔐 Practical 7 Performed Overview
 
-In **Practical 7**, security, user management, and middleware layers were added:
+In **Practical 7**, end-to-end security, user management, and authentication layers were implemented across backend and frontend:
 
+### Backend Implementation
 1. **User Model & Schema ([User.js](backend/models/User.js))**:
    - `email` (String, required, unique, trimmed)
    - `password` (String, hashed with `bcryptjs` salt rounds = 10)
@@ -53,6 +54,20 @@ In **Practical 7**, security, user management, and middleware layers were added:
    Client Request ──> authMiddleware (JWT Check) ──> validateTask ──> Controller/DB
    ```
 
+### Frontend Implementation
+1. **Auth Component ([Auth.jsx](frontend/src/components/Auth.jsx))**:
+   - Toggleable form for **Login** and **Registration**
+   - Saves issued token to `localStorage.setItem("token", data.token)`
+   - Displays real-time error/success messages
+2. **Central API Client ([api.js](frontend/src/api.js))**:
+   - Automatically attaches `Authorization: Bearer <token>` to protected mutation requests
+   - Handles `401 Unauthorized` responses and cleans up expired tokens
+3. **Dynamic Navbar & Logout ([Navbar.jsx](frontend/src/components/Navbar.jsx))**:
+   - Displays `Logout 🚪` button when authenticated, which clears `localStorage` token and reloads
+   - Displays `Login 🔐` link when unauthenticated
+4. **Routing ([App.jsx](frontend/src/App.jsx))**:
+   - Configured `/login` and `/auth` routes
+
 ---
 
 ## 📅 Practical 6 Performed Overview
@@ -68,7 +83,7 @@ In **Practical 6**, the generic full-stack template was adapted into an **Event 
 
 ### Frontend
 - **React (Vite)** — Fast functional UI components and state management
-- **React Router DOM (v6)** — Client-side multi-page routing (`/`, `/events`, `/events/:id`, `/about`, `/contact`, `/admin`, `/admin/events`)
+- **React Router DOM (v6)** — Client-side multi-page routing (`/`, `/events`, `/events/:id`, `/about`, `/contact`, `/login`, `/admin`, `/admin/events`)
 - **Fetch API** — Native asynchronous HTTP client
 - **Pure CSS** — Responsive, modern styling with variables and flexbox/grid
 
@@ -92,9 +107,10 @@ In **Practical 6**, the generic full-stack template was adapted into an **Event 
 │             http://localhost:5173                      │
 │    - User Interface, Pages & Admin Dashboard           │
 │    - State Management (useState, useEffect)            │
+│    - Auth (Auth.jsx, Login/Logout in Navbar)           │
 └──────────────────────────┬─────────────────────────────┘
                            │
-                           │ HTTP Requests with Optional Header:
+                           │ HTTP Requests with Header:
                            │ Authorization: Bearer <JWT_TOKEN>
                            ▼
 ┌────────────────────────────────────────────────────────┐
@@ -146,13 +162,14 @@ PRA_6/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── ErrorMessage.jsx
-│   │   │   ├── EventCard.jsx
-│   │   │   ├── EventForm.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   ├── Header.jsx
-│   │   │   ├── Loading.jsx
-│   │   │   └── Navbar.jsx
+│   │   │   ├── Auth.jsx          # Login & Register component
+│   │   │   ├── ErrorMessage.jsx  # Error alert component
+│   │   │   ├── EventCard.jsx     # Event card component
+│   │   │   ├── EventForm.jsx     # Controlled Add/Edit form
+│   │   │   ├── Footer.jsx        # Persistent footer
+│   │   │   ├── Header.jsx        # Page banner
+│   │   │   ├── Loading.jsx       # Loading spinner
+│   │   │   └── Navbar.jsx        # Navigation bar with auth state
 │   │   ├── pages/
 │   │   │   ├── admin/
 │   │   │   │   ├── AdminDashboard.jsx
@@ -163,10 +180,10 @@ PRA_6/
 │   │   │   ├── Events.jsx
 │   │   │   ├── Home.jsx
 │   │   │   └── NotFound.jsx
-│   │   ├── api.js
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
+│   │   ├── api.js                 # Central Fetch API with Bearer token
+│   │   ├── App.jsx                # React Router setup
+│   │   ├── index.css              # Global styling
+│   │   └── main.jsx               # React root mounting
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
@@ -186,7 +203,7 @@ PRA_6/
 | **Practical 4** | Express server setup, RESTful CRUD endpoints, custom logger & error handler middlewares |
 | **Practical 5** | MongoDB connection with Mongoose, Schema definition, validation, database CRUD queries |
 | **Practical 6** | Full-stack MERN integration with CORS and database persistence |
-| **Practical 7** | **Authentication & Security**: Password hashing (`bcryptjs`), JWT generation & verification (`jsonwebtoken`), protected routes with `authMiddleware`, input validation with `validateTask`, and `/api/auth/me` |
+| **Practical 7** | **Authentication & Security**: Password hashing (`bcryptjs`), JWT generation & verification (`jsonwebtoken`), protected routes with `authMiddleware`, input validation with `validateTask`, `/api/auth/me`, and Frontend Auth (`Auth.jsx`, Token storage, Logout) |
 
 ---
 
