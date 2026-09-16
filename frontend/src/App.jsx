@@ -1,56 +1,166 @@
 // src/App.jsx
-// Practical Concept: Practical 2 & Practical 7 (React Router DOM & Auth Routes Setup)
+// Practical 8: Performance Optimization and Lazy Loading
+// React.lazy() + Suspense + Route-based Code Splitting
 
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-// Components
+// =====================================================
+// NORMAL COMPONENT IMPORTS
+// These are small/persistent components, so they remain
+// normally imported.
+// =====================================================
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Auth from "./components/Auth";
 
-// User Pages
-import Home from "./pages/Home";
-import Events from "./pages/Events";
-import EventDetails from "./pages/EventDetails";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
+// =====================================================
+// LAZY-LOADED USER PAGES
+// These pages are loaded only when their route is visited.
+// =====================================================
 
-// Admin Pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import ManageEvents from "./pages/admin/ManageEvents";
+const Home = lazy(() => import("./pages/Home"));
+const Events = lazy(() => import("./pages/Events"));
+const EventDetails = lazy(() => import("./pages/EventDetails"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+
+// =====================================================
+// LAZY-LOADED 404 PAGE
+// =====================================================
+
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// =====================================================
+// LAZY-LOADED ADMIN PAGES
+// =====================================================
+
+const AdminDashboard = lazy(() =>
+  import("./pages/admin/AdminDashboard")
+);
+
+const ManageEvents = lazy(() =>
+  import("./pages/admin/ManageEvents")
+);
+
+// =====================================================
+// LOADING COMPONENT
+// Displayed while a lazy-loaded page is being downloaded.
+// =====================================================
+
+function LoadingPage() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "300px",
+        textAlign: "center",
+        fontSize: "20px",
+        fontWeight: "500",
+      }}
+    >
+      Loading page...
+    </div>
+  );
+}
+
+// =====================================================
+// MAIN APP
+// =====================================================
 
 function App() {
   return (
     <Router>
       <div className="app-layout">
+
         {/* Navigation Bar visible on all pages */}
         <Navbar />
 
         {/* Dynamic Page Content */}
         <main className="main-content">
-          <Routes>
-            {/* User Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/events/:id" element={<EventDetails />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Auth />} />
-            <Route path="/auth" element={<Auth />} />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/events" element={<ManageEvents />} />
+          {/* 
+            Suspense displays LoadingPage while React
+            downloads the required lazy-loaded component.
+          */}
+          <Suspense fallback={<LoadingPage />}>
 
-            {/* Catch-all 404 Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <Routes>
+
+              {/* ================= USER ROUTES ================= */}
+
+              <Route
+                path="/"
+                element={<Home />}
+              />
+
+              <Route
+                path="/events"
+                element={<Events />}
+              />
+
+              <Route
+                path="/events/:id"
+                element={<EventDetails />}
+              />
+
+              <Route
+                path="/about"
+                element={<About />}
+              />
+
+              <Route
+                path="/contact"
+                element={<Contact />}
+              />
+
+              {/* ================= AUTH ROUTES ================= */}
+
+              <Route
+                path="/login"
+                element={<Auth />}
+              />
+
+              <Route
+                path="/auth"
+                element={<Auth />}
+              />
+
+              {/* ================= ADMIN ROUTES ================= */}
+
+              <Route
+                path="/admin"
+                element={<AdminDashboard />}
+              />
+
+              <Route
+                path="/admin/events"
+                element={<ManageEvents />}
+              />
+
+              {/* ================= 404 ROUTE ================= */}
+
+              <Route
+                path="*"
+                element={<NotFound />}
+              />
+
+            </Routes>
+
+          </Suspense>
+
         </main>
 
-        {/* Persistent Footer */}
+        {/* Footer visible on all pages */}
         <Footer />
+
       </div>
     </Router>
   );
