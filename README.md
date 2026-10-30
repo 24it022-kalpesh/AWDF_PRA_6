@@ -1,5 +1,7 @@
 # Event Management System
 
+![CI Pipeline](https://github.com/24it022-kalpesh/AWDF_PRA_6/actions/workflows/ci.yml/badge.svg)
+
 A full-stack web application developed as part of **Advanced Web Development Frameworks (ITUE301)**. The project covers React component architecture, RESTful API development, MongoDB integration, authentication, performance optimization, asynchronous processing, and containerization using Docker.
 
 ## Project Overview
@@ -55,106 +57,106 @@ The intended application features include:
 
 ```text
 event-management-system/
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── package.json
-│   ├── Dockerfile
-│   └── .dockerignore
-├── backend/
-│   ├── models/
-│   ├── routes/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── server.js
-│   ├── package.json
-│   ├── Dockerfile
-│   └── .dockerignore
-├── docker-compose.yml
-├── .gitignore
-└── README.md
+â”œâ”€â”€ frontend/
+â”‚   â”œâ”€â”€ public/
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ pages/
+â”‚   â”‚   â”œâ”€â”€ services/
+â”‚   â”‚   â”œâ”€â”€ App.jsx
+â”‚   â”‚   â””â”€â”€ main.jsx
+â”‚   â”œâ”€â”€ package.json
+â”‚   â”œâ”€â”€ Dockerfile
+â”‚   â””â”€â”€ .dockerignore
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ models/
+â”‚   â”œâ”€â”€ routes/
+â”‚   â”œâ”€â”€ controllers/
+â”‚   â”œâ”€â”€ middleware/
+â”‚   â”œâ”€â”€ server.js
+â”‚   â”œâ”€â”€ package.json
+â”‚   â”œâ”€â”€ Dockerfile
+â”‚   â””â”€â”€ .dockerignore
+â”œâ”€â”€ docker-compose.yml
+â”œâ”€â”€ .gitignore
+â””â”€â”€ README.md
 ```
 
 The directory structure is a recommended layout and can be adjusted to match the actual project.
 
 ## Weekly Practical Implementation
 
-### Week 1: Introduction to React and Component Architecture — CO1
+### Week 1: Introduction to React and Component Architecture â€” CO1
 
 - Set up the React development environment.
 - Understand JSX and functional components.
 - Build reusable components for event cards, headers, navigation, and event details.
 - Organize the frontend using a component-based architecture.
 
-### Week 2: State Management and Routing in React — CO1
+### Week 2: State Management and Routing in React â€” CO1
 
 - Manage event data and UI state using React hooks.
 - Use `useState` and `useEffect` where appropriate.
 - Implement page navigation using React Router.
 - Create routes for the event listing, event details, and event creation pages.
 
-### Week 3: API Integration and Data Rendering in React — CO1
+### Week 3: API Integration and Data Rendering in React â€” CO1
 
 - Fetch event data from backend APIs.
 - Render event lists dynamically.
 - Handle loading states and API errors.
 - Integrate frontend forms with API requests.
 
-### Week 4: Building a RESTful API with Node.js and Express — CO2
+### Week 4: Building a RESTful API with Node.js and Express â€” CO2
 
 - Set up the Node.js and Express backend.
 - Create REST endpoints for event management.
 - Implement CRUD operations.
 - Handle HTTP methods, status codes, request bodies, and errors.
 
-### Week 5: MongoDB Integration and Schema Design with Mongoose — CO2, CO3
+### Week 5: MongoDB Integration and Schema Design with Mongoose â€” CO2, CO3
 
 - Connect the backend to MongoDB.
 - Design Mongoose schemas for event records.
 - Validate event data.
 - Store, retrieve, update, and delete event information.
 
-### Week 6: Full Stack Integration — React + Node + MongoDB — CO1, CO2
+### Week 6: Full Stack Integration â€” React + Node + MongoDB â€” CO1, CO2
 
 - Connect the React frontend to the Express API.
 - Integrate API endpoints with event forms and listing pages.
 - Verify that changes persist in MongoDB.
 - Test complete event management workflows.
 
-### Week 7: Authentication and Middleware Pipeline — CO2, CO6
+### Week 7: Authentication and Middleware Pipeline â€” CO2, CO6
 
 - Understand Express middleware.
 - Implement authentication if required by the application.
 - Validate incoming requests.
 - Protect restricted routes and handle authentication errors.
 
-### Week 8: Performance Optimization and Lazy Loading in React — CO1
+### Week 8: Performance Optimization and Lazy Loading in React â€” CO1
 
 - Identify components that can be loaded lazily.
 - Use `React.lazy` and `Suspense` where appropriate.
 - Reduce unnecessary rendering.
 - Improve the initial loading experience.
 
-### Week 9: In-Memory Caching and Query Optimization — CO2, CO4
+### Week 9: In-Memory Caching and Query Optimization â€” CO2, CO4
 
 - Explore caching frequently requested event data.
 - Optimize MongoDB queries.
 - Use suitable indexes for commonly queried fields.
 - Compare API performance before and after optimization.
 
-### Week 10: Asynchronous Processing with Event-Driven Architecture — CO4
+### Week 10: Asynchronous Processing with Event-Driven Architecture â€” CO4
 
 - Understand asynchronous processing in Node.js.
 - Explore event-driven communication and event listeners.
 - Separate selected background tasks from request handling.
 - Implement event notifications or background processing if included in the project.
 
-### Week 11: Containerization with Docker and Docker Compose — CO5
+### Week 11: Containerization with Docker and Docker Compose â€” CO5
 
 - Create a Dockerfile for the React frontend.
 - Create a Dockerfile for the Node.js and Express backend.
@@ -308,7 +310,7 @@ Upon completion, the project demonstrates the ability to:
 - **Course:** Advanced Web Development Frameworks
 - **Course Code:** ITUE301
 - **Project:** Event Management System
-- **Practical Coverage:** Weeks 1–11
+- **Practical Coverage:** Weeks 1â€“11
 - **Repository:** https://github.com/24it022-kalpesh/AWDF_PRA_6.git
 
 ## Author
