@@ -560,3 +560,63 @@ textarea.form-control {
     font-size: 2rem;
   }
 }
+
+/* ==========================================================================
+   AI Description Generator Styles (Practical 13)
+   ========================================================================== */
+.ai-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.ai-field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-field-head label {
+  font-weight: 600;
+  color: var(--text-color, #1f2937);
+}
+
+.ai-btn, .ai-field-head button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-btn:disabled, .ai-field-head button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-info {
+  font-size: 0.85rem;
+  color: #4f46e5;
+  margin: 0.25rem 0 0;
+}
+
+.ai-warn {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin: 0.25rem 0 0;
+}
+
+.ai-disclaimer {
+  font-size: 0.8rem;
+  color: #d97706;
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  margin: 0.25rem 0 0;
+}

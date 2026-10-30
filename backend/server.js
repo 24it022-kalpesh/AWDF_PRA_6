@@ -18,6 +18,7 @@ const errorHandler = require("./middleware/errorHandler");
 const eventRoutes = require("./routes/eventRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const authRoutes = require("./routes/authRoutes");
+const aiRoutes = require("./routes/ai");
 
 // 4. Register EventEmitter listeners
 require("./listeners");
@@ -57,6 +58,9 @@ app.get("/", (req, res) => {
         updateTask: "PUT /api/tasks/:id (Protected)",
         deleteTask: "DELETE /api/tasks/:id (Protected)",
       },
+      ai: {
+        generateDescription: "POST /api/ai/generate-description (Protected)",
+      },
     },
   });
 });
@@ -65,6 +69,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Backward compatibility: support /tasks as well
 app.use("/tasks", taskRoutes);

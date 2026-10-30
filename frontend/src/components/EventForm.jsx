@@ -2,6 +2,7 @@
 // Practical Concept: Practical 2 - useState and Controlled Form
 
 import React, { useState, useEffect } from "react";
+import AIDescriptionField from "./AIDescriptionField";
 
 function EventForm({
   onSubmit,
@@ -18,7 +19,6 @@ function EventForm({
     category: "Technology",
     status: "Upcoming",
   });
-
 
   // Fill form when editing an event
   useEffect(() => {
@@ -45,7 +45,6 @@ function EventForm({
     }
   }, [initialData]);
 
-
   // Update form state
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +54,6 @@ function EventForm({
       [name]: value,
     }));
   };
-
 
   // Submit form
   const handleSubmit = (e) => {
@@ -69,7 +67,6 @@ function EventForm({
     onSubmit(formData);
   };
 
-
   return (
     <div className="form-card">
       <h3>
@@ -77,7 +74,6 @@ function EventForm({
       </h3>
 
       <form onSubmit={handleSubmit}>
-
         {/* Event Title */}
         <div className="form-group">
           <label>Event Title *</label>
@@ -92,22 +88,18 @@ function EventForm({
           />
         </div>
 
-
-        {/* Description */}
+        {/* AI-powered Description */}
         <div className="form-group">
-          <label>Description</label>
-
-          <textarea
-            name="description"
-            className="form-control"
+          <AIDescriptionField
+            title={formData.title}
             value={formData.description}
-            onChange={handleChange}
+            onChange={(newDesc) =>
+              setFormData((prev) => ({ ...prev, description: newDesc }))
+            }
           />
         </div>
 
-
         <div className="form-row">
-
           {/* Event Date */}
           <div className="form-group">
             <label>Event Date *</label>
@@ -121,7 +113,6 @@ function EventForm({
               required
             />
           </div>
-
 
           {/* Location */}
           <div className="form-group">
@@ -138,9 +129,7 @@ function EventForm({
           </div>
         </div>
 
-
         <div className="form-row">
-
           {/* Category */}
           <div className="form-group">
             <label>Category *</label>
@@ -159,7 +148,6 @@ function EventForm({
             </select>
           </div>
 
-
           {/* Status */}
           <div className="form-group">
             <label>Status</label>
@@ -177,7 +165,6 @@ function EventForm({
             </select>
           </div>
         </div>
-
 
         <div className="form-actions">
           <button type="submit" className="btn btn-primary">
