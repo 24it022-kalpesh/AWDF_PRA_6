@@ -1,6 +1,6 @@
 // server.js
 // Practical Concept: Practical 4, Practical 5, Practical 6 & Practical 7
-// (Express Server, MongoDB Connection, Authentication & Middleware Pipeline)
+// Express Server, MongoDB Connection, Authentication & Middleware Pipeline
 
 // 1. Import dependencies
 const express = require("express");
@@ -8,45 +8,33 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-// Import custom middleware and routes
+// 2. Load environment variables
+dotenv.config();
+
+// 3. Import custom middleware and routes
 const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
+
 const eventRoutes = require("./routes/eventRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const authRoutes = require("./routes/authRoutes");
 
-// Register EventEmitter listeners
+// 4. Register EventEmitter listeners
 require("./listeners");
 
-// 2. Load environment variables from .env file
-dotenv.config();
-
-// 3. Initialize Express app
+// 5. Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/management_system_db";
 
-// 4. Connect to MongoDB Database
-
-mongoose.connect(
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/management_system_db"
-)
-.then(() => console.log("MongoDB connected"))
-.catch((err) => console.error("MongoDB connection failed:", err));
-
-
-// 5. Built-in middleware to parse incoming JSON payloads
+// 6. Built-in middleware
 app.use(express.json());
-
-// 6. Enable Cross-Origin Resource Sharing (CORS) so React frontend (port 5173) can talk to Express (port 5000)
 app.use(cors());
 
-// 7. Use custom request logging middleware
+// 7. Custom request logging middleware
 app.use(logger);
 
-// Health check / welcome route
+// 8. Health check / welcome route
 app.get("/", (req, res) => {
-  res.json({
+  res.status(200).json({
     message: "Welcome to the Event & Task Management System API!",
     status: "Running",
     endpoints: {
@@ -73,12 +61,15 @@ app.get("/", (req, res) => {
   });
 });
 
-// 8. Register Routes
+// 9. Register routes
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// 9. 404 Handler for undefined API routes
+// Backward compatibility: support /tasks as well
+app.use("/tasks", taskRoutes);
+
+// 10. 404 handler for undefined routes
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -86,10 +77,21 @@ app.use((req, res, next) => {
   });
 });
 
-// 10. Register global error handling middleware (Must be registered last)
+// 11. Global error handler (must be last)
 app.use(errorHandler);
 
-// 11. Start Express Server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+// backend/server.js  (bottom of file)
+// Export the app so Supertest can call it without opening a real port,
+// and only connect to MongoDB / listen when the file is run directly.
+const PORT = process.env.PORT || 5000;
+
+if (require.main === module) {
+  mongoose
+    .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/management_system_db")
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => console.error("MongoDB connection failed:", err));
+
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;
