@@ -5,7 +5,7 @@ const app = require('../server');
 describe('Task Management API', () => {
   test('GET / returns 200 and status Running', async () => {
     const res = await request(app).get('/');
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(404);   // wrong on purpose -> pipeline must fail
     expect(res.body.status).toBe('Running');
   });
 
